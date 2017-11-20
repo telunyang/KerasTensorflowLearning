@@ -47,7 +47,7 @@ class CIFAR10:
         
         #One-Hot編碼
         y_label_train_OneHot = np_utils.to_categorical(self.y_label_train)
-        y_label_test_OneHot = np_utils.to_categorical(self.y_test_train)
+        y_label_test_OneHot = np_utils.to_categorical(self.y_label_test)
         
         
         
