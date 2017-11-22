@@ -44,6 +44,15 @@ class CIFAR10:
             idx+=1
         plt.show()
     
+    def show_train_history(self, train_history, train, validation):
+        plt.plot(train_history.history[train])
+        plt.plot(train_history.history[validation])
+        plt.title('Train History')
+        plt.ylabel(train)
+        plt.xlabel('Epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
+    
     def run(self):
         #self.plot_image_labels_prediction(self.x_img_train, self.y_label_train, [], 0)
         
@@ -103,7 +112,45 @@ class CIFAR10:
         #建立輸出層
         self.model.add(Dense(10, activation='softmax'))
         
+        #查看模型摘要
         print(self.model.summary())
+        
+        #定義訓練方式
+        self.model.compile(
+            loss='categorical_crossentropy', 
+            optimizer='adam', 
+            metrics=['accuracy'])
+        
+        #開始訓練
+        train_history = self.model.fit(
+            x_img_train_normalize,
+            y_label_train_OneHot,
+            validation_split=0.2,
+            epochs=10,
+            batch_size=128,
+            verbose=1)
+        
+        #畫出 accuracy 執行結果
+        self.show_train_history(train_history, 'acc', 'val_acc')
+        
+        #畫出 loss 誤差執行結果
+        self.show_train_history(train_history, 'loss', 'val_loss')
+        
+        #評估模型準確率
+        scores = self.model.evaluate(
+            x_img_test_normalize,
+            y_label_test_OneHot, 
+            verbose=0)
+        scores[1]
+        
+        #執行預測
+        prediction = self.model.predict_classes(x_img_test_normalize)
+        
+        #預測結果
+        prediction[:10]
+        
+        #顯示前 10 筆預測結果
+        self.plot_image_labels_prediction(self.x_img_test, self.y_label_test, prediction, 0, 10)
         
 obj = CIFAR10()
 obj.run()
